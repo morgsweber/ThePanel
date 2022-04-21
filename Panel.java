@@ -2,78 +2,76 @@ import java.util.Hashtable;
 
 public class Panel {
     public static int[] ALGARISMOS = { 6, 2, 5, 5, 4, 5, 6, 4, 7, 6 };
-    public static Hashtable<String, Integer> MEMORY = new Hashtable<String, Integer>();
+    public static Hashtable<String, Long> MEMORY = new Hashtable<String, Long>();
 
     public static String makeAccount(String values) {
-        int dig = Integer.parseInt(values.split(" ")[0]);
-        int pal = Integer.parseInt(values.split(" ")[1]);
+        long dig = Long.parseLong(values.split(" ")[0]);
+        long pal = Long.parseLong(values.split(" ")[1]);
 
         if (dig <= 0)
             return "Não é possível formar um número com zero casas.";
         if (pal < 2)
             return "Para criar um número, é preciso no mínimo dois palitinhos.";
 
-        //int totalRec = makeAccountRec(dig, pal, false);
-        int totalRecMem = makeAccountRecMem(dig, pal, false);
-        //System.out.println(totalRec);
-        return "Total recursão com memória: " ;
+        // int total = makeAccountRec(dig, pal, false);
+        // int total = makeAccountRec(dig, pal, false);
+        long total = makeAccountRecMem(dig, pal, false);
+        return "Total: " + total;
 
     }
 
-    public static int makeAccountRec(int digitos, int palitinhos, boolean z) {
+    // Versão recursiva
+    public static int makeAccountRec(long digitos, long palitinhos, boolean z) {
         int total = 0;
-        // verificar se cabe no visor, se não cabe, nem chama a recursão
-        // if (palitinhos > digitos * 7) {
-        //     return 0;
-        // }
 
-        System.out.println("dig: " + digitos + " pal: " + palitinhos + " total: " + total);
+        if (palitinhos > digitos * 7) {
+            return 0;
+        }
+
         if (palitinhos > 0 && digitos == 0) {
             return 0;
         }
+
         if (palitinhos == 0) {
             return 1;
         }
+
         if (palitinhos < 0 || (digitos == 0 && palitinhos > 0)) {
             return 0;
         }
 
         for (int j = 0; j < ALGARISMOS.length; j++) {
             if (j == 0 && !z) {
-                z = true;
+                z = true; // não permite colocar um zero no início caso não tenha um número antes
                 j++;
-            } // não permite colocar um zero no início caso não tenha um número antes
+            }
             total += makeAccountRec(digitos - 1, palitinhos - ALGARISMOS[j], z);
         }
-        System.out.println("total: " +  total);
         return total;
     }
 
-    public static int makeAccountRecMem(int digitos, int palitinhos, boolean z) {
-        int total = 0;
-        String key = digitos+","+palitinhos;
+    // Versão recursiva com memória
+    public static long makeAccountRecMem(long digitos, long palitinhos, boolean z) {
+        long total = 0;
+        String key = digitos + "," + palitinhos;
 
-        // if (palitinhos > digitos * 7) {
-        //     MEMORY.put(key, 0);
-        //     return 0;
-        // }
-
-        if (MEMORY.get(key) != null){
+        if (MEMORY.containsKey(key)) {
             return MEMORY.get(key);
         }
 
         if (palitinhos > 0 && digitos == 0) {
-            MEMORY.put(key, 0);
-            return 0;
-        }
-        if (palitinhos == 0) {
-            MEMORY.put(key, 1);
-            return 1;
+            MEMORY.put(key, (long) 0);
+            return (long) 0;
         }
 
-        if (palitinhos < 0 || (digitos == 0 && palitinhos > 0)) {
-            MEMORY.put(key, 0);
-            return 0;
+        if (palitinhos == 0 && digitos >= 0) {
+            MEMORY.put(key, (long) 1);
+            return (long) 1;
+        }
+
+        if (palitinhos < 0) {
+            MEMORY.put(key, (long) 0);
+            return (long) 0;
         }
 
         for (int j = 0; j < ALGARISMOS.length; j++) {
@@ -81,50 +79,56 @@ public class Panel {
                 z = true;
                 j++;
             } // não permite colocar um zero no início caso não tenha um número antes
-            total += makeAccountRecMem(digitos - 1, palitinhos - ALGARISMOS[j], z);
+            total += makeAccountRecMem((digitos - 1), (palitinhos - ALGARISMOS[j]), z);
         }
-        MEMORY.put(key, total);
+        MEMORY.put(key, (long) total);
         return total;
     }
 
-    public static int makeAccountMatrix(int digitos, int palitinhos){
-        return 0;
+    //Versão sem recursão
+    public static int makeAccountMatrix(int digitos, int palitinhos) {
+        int[][] matrix = new int [digitos+1][palitinhos+1];
+        int result = 0;
+
+        //etsrutura casos bases da matriz 
+        for(int i = 0; i < matrix[0].length; i++){
+            matrix[0][i] = 0;
+        }
+
+        for(int i = 0; i < matrix[0].length; i++){
+            matrix[1][i] = 0;
+            if(i == 0){matrix[1][i] = 1;}
+            else if(i == 1){matrix[1][i] = 1;}
+            else if(i == 2){matrix[1][i] = 1;}
+            else if(i == 3){matrix[1][i] = 1;}
+            else if(i == 4){matrix[1][i] = 2;}
+            else if(i == 5){matrix[1][i] = 3;}
+            else if(i == 6){matrix[1][i] = 3;}
+            else if(i == 7){matrix[1][i] = 1;}
+            else{
+                matrix[1][i] = 0;
+            }
+        }
+
+        for(int i = 0; i < matrix.length; i++){
+            matrix[i][0] = 1;
+            matrix[i][1] = 1;
+            matrix[i][2] = 1;
+            matrix[i][3] = 1;
+        }
+
+        for(int i=2; i<=matrix.length-1; i++){
+            for(int j=4; j<=matrix[i].length-1; j++){  
+                for(int a = 0; a < ALGARISMOS.length; a++){
+                    int column = j-ALGARISMOS[a];
+                    if(column > 0){
+                        result += matrix[i-1][column];
+                    }
+                }
+                matrix[i][j] = result;
+                result = 0;
+            }
+        }
+        return matrix[digitos][palitinhos];
     }
-
-    // public static int makeAccount2(int digitos, int palitinhos){
-
-    // for(int i=1; i<ALGARISMOS.length; i++){
-    // int auxPalitinhos = palitinhos - ALGARISMOS[i];
-    // System.out.print(i);
-    // int count = 0;
-    // while(count < AUX.length){
-    // if(AUX[count] <= auxPalitinhos){
-    // auxPalitinhos -= AUX[count];
-    // if(auxPalitinhos < 2){
-    // count++;
-    // }else{
-    // System.out.print(count);
-    // }
-
-    // if(auxPalitinhos == 0){
-    // auxPalitinhos = palitinhos - ALGARISMOS[i];
-    // count++;
-    // }
-
-    // }else{
-    // if(auxPalitinhos >= 2){
-    // auxPalitinhos -= AUX[count];
-    // System.out.print(count);
-    // count++;
-    // }else{
-    // count = AUX.length;
-    // auxPalitinhos = palitinhos;
-    // }
-    // }
-    // }
-    // System.out.println();
-    // }
-
-    // return TOTAL;
-    // }
 }
