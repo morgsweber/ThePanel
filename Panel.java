@@ -4,7 +4,7 @@ public class Panel {
     public static int[] ALGARISMOS = { 6, 2, 5, 5, 4, 5, 6, 4, 7, 6 };
     public static Hashtable<String, Long> MEMORY = new Hashtable<String, Long>();
 
-    public static String makeAccount(String values) {
+    public String makeAccount(String values) {
         long dig = Long.parseLong(values.split(" ")[0]);
         long pal = Long.parseLong(values.split(" ")[1]);
 
