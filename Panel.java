@@ -13,8 +13,7 @@ public class Panel {
         if (pal < 2)
             return "Para criar um número, é preciso no mínimo dois palitinhos.";
 
-        // int total = makeAccountRec(dig, pal, false);
-        // int total = makeAccountRec(dig, pal, false);
+        //int total = makeAccountRec(dig, pal, false);
         long total = makeAccountRecMem(dig, pal, false);
         return "Total: " + total;
 
