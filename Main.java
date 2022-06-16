@@ -1,5 +1,4 @@
 import java.util.Scanner;
-import java.util.Hashtable;
 /*  PROJETO E OTIMIZAÇÃO DE ALGORITMOS
     Prof. João Batista
     Turma 010
@@ -19,6 +18,5 @@ public class Main {
         Panel p = new Panel();
         System.out.println(p.makeAccount(values));
         in.close();
-
     }
 }
